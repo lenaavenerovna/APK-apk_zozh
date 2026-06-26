@@ -4,7 +4,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.onrender.magic_helth.twa",
-      "sha256_cert_fingerprints": ["A079A3A6C5C84BDC3E08C7BD9E22C60BDE4796A9009A6DC5722FEB2869543F04"]
+      "sha256_cert_fingerprints": ["F31AF400477A18B0818535BD66AAB8F400DE8A3B5018E3F3E8AD8861D1D8F484"]
     }
   }
 ]
