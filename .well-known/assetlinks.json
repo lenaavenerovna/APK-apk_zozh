@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.onrender.magic_helth.twa",
+      "sha256_cert_fingerprints": ["A079A3A6C5C84BDC3E08C7BD9E22C60BDE4796A9009A6DC5722FEB2869543F04"]
+    }
+  }
+]
