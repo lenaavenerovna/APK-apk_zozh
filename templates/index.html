@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>✨ Магический ЗОЖ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+            color: #e0d0f0;
+            min-height: 100vh;
+            padding: 10px;
+            padding-bottom: 80px;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(107, 63, 160, 0.3);
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 28px; color: #bf9fef; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(20, 5, 40, 0.7);
+            border: 2px solid #6b3fa0;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .emoji { font-size: 24px; }
+        .stat-card .value { font-size: 20px; font-weight: bold; margin-top: 5px; }
+        .stat-card .label { font-size: 12px; color: #888; margin-top: 2px; }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, #6b3fa0, #8b5fbf);
+            border: 2px solid #9b7fcf;
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover, .nav-btn:active { transform: scale(0.95); }
+        .magic-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #6b3fa0, #9b7fcf);
+            border: 2px solid #bf9fef;
+            border-radius: 20px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .magic-btn:hover, .magic-btn:active { transform: scale(0.98); }
+        .page { display: none; }
+        .page.active { display: block; }
+        .card {
+            background: rgba(30, 10, 50, 0.8);
+            border: 2px solid #6b3fa0;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .input-group input, .input-group select {
+            flex: 1;
+            padding: 10px;
+            background: rgba(20, 5, 40, 0.8);
+            border: 2px solid #6b3fa0;
+            border-radius: 10px;
+            color: #e0d0f0;
+            font-size: 14px;
+            min-width: 80px;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #9b7fcf;
+            outline: none;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover, .btn:active { transform: scale(0.95); }
+        .btn-primary { background: linear-gradient(135deg, #6b3fa0, #8b5fbf); color: white; }
+        .btn-success { background: linear-gradient(135deg, #2d7d46, #3da55d); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #7d2d2d, #a53d3d); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #7d6d2d, #a58d3d); color: white; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(20, 5, 40, 0.6);
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+        .activity-item .name { font-weight: bold; }
+        .activity-item .info { font-size: 12px; color: #888; }
+        .activity-item .points { color: #ffd700; font-weight: bold; }
+        .activity-item.completed { opacity: 0.6; }
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(107, 63, 160, 0.3);
+            font-size: 14px;
+        }
+        .history-item .date { color: #888; font-size: 12px; }
+        .history-item .plus { color: #4CAF50; font-weight: bold; }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            background: rgba(20, 5, 40, 0.95);
+            border-top: 2px solid #6b3fa0;
+            padding: 5px 0;
+            z-index: 1000;
+        }
+        .bottom-nav .nav-item {
+            text-align: center;
+            padding: 5px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        .bottom-nav .nav-item.active { color: #bf9fef; }
+        .bottom-nav .nav-item .icon { font-size: 24px; display: block; }
+        .snackbar {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 10, 50, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: 2px solid #9b7fcf;
+            display: none;
+            z-index: 2000;
+            max-width: 90%;
+            text-align: center;
+        }
+        .snackbar.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        @media (max-width: 400px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .header h1 { font-size: 22px; }
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(20, 5, 40, 0.5); }
+        ::-webkit-scrollbar-thumb { background: #6b3fa0; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="snackbar" class="snackbar"></div>
+        
+        <!-- Главная -->
+        <div id="home" class="page active">
+            <div class="header"><h1>✨ Магический ЗОЖ ✨</h1></div>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="emoji">⭐</div><div class="value" id="points">0</div><div class="label">Очки</div></div>
+                <div class="stat-card"><div class="emoji">🏆</div><div class="value" id="level">1</div><div class="label">Уровень</div></div>
+                <div class="stat-card"><div class="emoji">🔥</div><div class="value" id="streak">0</div><div class="label">Серия</div></div>
+                <div class="stat-card"><div class="emoji">📊</div><div class="value" id="progress">0%</div><div class="label">Прогресс</div></div>
+            </div>
+            <div class="nav-grid">
+                <button class="nav-btn" onclick="showPage('activities')">📋 Активности</button>
+                <button class="nav-btn" onclick="showPage('categories')">🏷️ Категории</button>
+                <button class="nav-btn" onclick="showPage('history')">📜 История</button>
+                <button class="nav-btn" onclick="showPage('achievements')">🏅 Достижения</button>
+            </div>
+            <button class="magic-btn" onclick="showMagic()">🌟 Магия 🌟</button>
+            <div id="homeAchievements" class="card"></div>
+        </div>
+        
+        <!-- Активности -->
+        <div id="activities" class="page">
+            <h2 style="margin-bottom:15px;">📋 Активности</h2>
+            <div class="card">
+                <div class="input-group">
+                    <input type="text" id="activityName" placeholder="🔮 Название">
+                    <input type="text" id="activityCategory" placeholder="Категория">
+                    <input type="number" id="activityPoints" placeholder="⭐ Очки" style="width:80px;">
+                </div>
+                <button class="btn btn-primary" onclick="addActivity()">➕ Добавить</button>
+            </div>
+            <div id="activitiesList"></div>
+        </div>
+        
+        <!-- Категории -->
+        <div id="categories" class="page">
+            <h2 style="margin-bottom:15px;">🏷️ Категории</h2>
+            <div class="card">
+                <div class="input-group">
+                    <input type="text" id="categoryName" placeholder="🔮 Название">
+                    <input type="text" id="categoryIcon" placeholder="✨ Иконка" style="width:80px;">
+                </div>
+                <button class="btn btn-primary" onclick="addCategory()">➕ Добавить</button>
+            </div>
+            <div id="categoriesList"></div>
+        </div>
+        
+        <!-- История -->
+        <div id="history" class="page">
+            <h2 style="margin-bottom:15px;">📜 История</h2>
+            <button class="btn btn-danger" onclick="clearHistory()" style="margin-bottom:10px;">🗑️ Очистить историю</button>
+            <div id="historyList"></div>
+        </div>
+        
+        <!-- Достижения -->
+        <div id="achievements" class="page">
+            <h2 style="margin-bottom:15px;">🏅 Достижения</h2>
+            <div id="achievementsList"></div>
+        </div>
+    </div>
+    
+    <!-- Нижняя навигация -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showPage('home')"><span class="icon">🏠</span>Главная</div>
+        <div class="nav-item" onclick="showPage('activities')"><span class="icon">📋</span>Активности</div>
+        <div class="nav-item" onclick="showPage('categories')"><span class="icon">🏷️</span>Категории</div>
+        <div class="nav-item" onclick="showPage('history')"><span class="icon">📜</span>История</div>
+        <div class="nav-item" onclick="showPage('achievements')"><span class="icon">🏅</span>Достижения</div>
+    </div>
+    
+    <script>
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+            const pages = ['home', 'activities', 'categories', 'history', 'achievements'];
+            document.querySelectorAll('.bottom-nav .nav-item')[pages.indexOf(page)].classList.add('active');
+            updateAll();
+        }
+        
+        function showSnackbar(msg) {
+            const el = document.getElementById('snackbar');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(el.timeout);
+            el.timeout = setTimeout(() => el.classList.remove('show'), 2500);
+        }
+        
+        function showMagic() {
+            const msgs = ["🌟 Магия внутри тебя!", "🔮 Ты на правильном пути!", "✨ Сила воли - твоя суперсила!", "🧙 Каждый шаг приближает к цели!", "⭐ Ты - творец своей судьбы!", "🌈 Верь в себя!", "🔥 Твоя энергия бесконечна!"];
+            showSnackbar(msgs[Math.floor(Math.random() * msgs.length)]);
+        }
+        
+        async function updateStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const stats = await res.json();
+                document.getElementById('points').textContent = stats.points;
+                document.getElementById('level').textContent = stats.level;
+                document.getElementById('streak').textContent = stats.streak;
+                document.getElementById('progress').textContent = stats.progress.toFixed(0) + '%';
+                const homeAchievements = document.getElementById('homeAchievements');
+                if (stats.achievements && stats.achievements.length > 0) {
+                    homeAchievements.innerHTML = `<h3>🏅 Последние достижения</h3>${stats.achievements.slice(-3).map(a => `<div style="padding:5px;">${a}</div>`).join('')}`;
+                } else {
+                    homeAchievements.innerHTML = '<div style="text-align:center;color:#888;">Нет достижений</div>';
+                }
+            } catch(e) { console.error(e); }
+        }
+        
+        async function updateActivities() {
+            try {
+                const res = await fetch('/api/activities');
+                const activities = await res.json();
+                const list = document.getElementById('activitiesList');
+                if (!activities.length) { list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">Нет активностей</div>'; return; }
+                list.innerHTML = activities.map((act, i) => `
+                    <div class="activity-item ${act.completed ? 'completed' : ''}">
+                        <div><div class="name">${act.completed ? '✅' : '⬜'} ${act.name}</div><div class="info">${act.category}</div></div>
+                        <div><span class="points">⭐${act.points}</span>
+                        <div style="margin-top:5px;">
+                            ${act.completed ? 
+                                `<button class="btn btn-warning btn-sm" onclick="resetActivity(${i})">↩️</button>` :
+                                `<button class="btn btn-success btn-sm" onclick="completeActivity(${i})">✅</button>`
+                            }
+                            <button class="btn btn-danger btn-sm" onclick="deleteActivity(${i})">🗑️</button>
+                        </div></div>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+        
+        async function addActivity() {
+            const name = document.getElementById('activityName').value.trim();
+            const category = document.getElementById('activityCategory').value.trim();
+            const points = parseInt(document.getElementById('activityPoints').value);
+            if (!name || !category || !points) { showSnackbar('❌ Заполните все поля'); return; }
+            try {
+                const res = await fetch('/api/activity/add', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, category, points})});
+                const data = await res.json();
+                if (data.success) {
+                    showSnackbar(data.message);
+                    document.getElementById('activityName').value = '';
+                    document.getElementById('activityCategory').value = '';
+                    document.getElementById('activityPoints').value = '';
+                    updateAll();
+                } else { showSnackbar('❌ ' + data.message); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function completeActivity(index) {
+            try {
+                const res = await fetch(`/api/activity/complete/${index}`, {method:'POST'});
+                const data = await res.json();
+                if (data.success) { showSnackbar(`🌟 +${data.points} ⭐`); updateAll(); }
+                else { showSnackbar('⚠️ ' + data.message); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function resetActivity(index) {
+            try {
+                const res = await fetch(`/api/activity/reset/${index}`, {method:'POST'});
+                const data = await res.json();
+                if (data.success) { showSnackbar('🔄 Сброшено'); updateAll(); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function deleteActivity(index) {
+            if (!confirm('Удалить активность?')) return;
+            try {
+                const res = await fetch(`/api/activity/delete/${index}`, {method:'DELETE'});
+                const data = await res.json();
+                if (data.success) { showSnackbar('🗑️ Удалено'); updateAll(); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function updateCategories() {
+            try {
+                const res = await fetch('/api/categories');
+                const categories = await res.json();
+                const list = document.getElementById('categoriesList');
+                if (!categories.length) { list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">Нет категорий</div>'; return; }
+                list.innerHTML = categories.map((cat, i) => `
+                    <div class="activity-item"><div>${cat.icon} ${cat.name}</div><button class="btn btn-danger btn-sm" onclick="deleteCategory(${i})">🗑️</button></div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+        
+        async function addCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            const icon = document.getElementById('categoryIcon').value.trim() || '✨';
+            if (!name) { showSnackbar('❌ Введите название'); return; }
+            try {
+                const res = await fetch('/api/category/add', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, icon})});
+                const data = await res.json();
+                if (data.success) {
+                    showSnackbar(data.message);
+                    document.getElementById('categoryName').value = '';
+                    document.getElementById('categoryIcon').value = '';
+                    updateAll();
+                } else { showSnackbar('❌ ' + data.message); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function deleteCategory(index) {
+            if (!confirm('Удалить категорию?')) return;
+            try {
+                const res = await fetch(`/api/category/delete/${index}`, {method:'DELETE'});
+                const data = await res.json();
+                if (data.success) { showSnackbar('🗑️ Категория удалена'); updateAll(); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function updateHistory() {
+            try {
+                const res = await fetch('/api/history');
+                const history = await res.json();
+                const list = document.getElementById('historyList');
+                if (!history.length) { list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">История пуста</div>'; return; }
+                list.innerHTML = history.map(h => `<div class="history-item"><div>${h.activity} <span class="plus">+${h.points}⭐</span></div><div class="date">${h.date}</div></div>`).join('');
+            } catch(e) { console.error(e); }
+        }
+        
+        async function clearHistory() {
+            if (!confirm('Очистить историю?')) return;
+            try {
+                const res = await fetch('/api/clear_history', {method:'POST'});
+                const data = await res.json();
+                if (data.success) { showSnackbar('🗑️ История очищена'); updateAll(); }
+            } catch(e) { showSnackbar('❌ Ошибка'); }
+        }
+        
+        async function updateAchievements() {
+            try {
+                const res = await fetch('/api/achievements');
+                const achievements = await res.json();
+                const list = document.getElementById('achievementsList');
+                if (!achievements || !achievements.length) { list.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">Нет достижений</div>'; return; }
+                list.innerHTML = achievements.map(a => `<div class="activity-item">🏅 ${a}</div>`).join('');
+            } catch(e) { console.error(e); }
+        }
+        
+        function updateAll() {
+            updateStats();
+            updateActivities();
+            updateCategories();
+            updateHistory();
+            updateAchievements();
+        }
+        
+        // Автообновление
+        setInterval(updateAll, 5000);
+        updateAll();
+    </script>
+</body>
+</html>
