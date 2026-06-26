@@ -284,6 +284,15 @@ def reset_all():
     data.save_data()
     return jsonify({'success': True, 'message': 'Всё сброшено!'})
 
+@app.route('/.well-known/assetlinks.json')
+def serve_assetlinks():
+    try:
+        with open('.well-known/assetlinks.json', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content, 200, {'Content-Type': 'application/json; charset=utf-8'}
+    except FileNotFoundError:
+        return jsonify({'error': 'assetlinks.json not found'}), 404
+
 if __name__ == '__main__':
     print("=" * 50)
     print("✨ Магический ЗОЖ приложение запущено!")
